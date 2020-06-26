@@ -4,7 +4,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class MoveComponent : ComponentBase { 
-    public float moveSpeed = 50f;
+    public float moveSpeed = 80f;
     public int moveDirection;
     public bool needMove;
     public bool collisionDetection = true;

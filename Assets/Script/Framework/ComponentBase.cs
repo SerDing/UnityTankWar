@@ -5,5 +5,5 @@ using UnityEngine;
 public class ComponentBase
 {
     [System.NonSerialized] public Entity entity;
-    public bool enable = true;
+    public bool enable = false;
 }

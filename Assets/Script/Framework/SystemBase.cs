@@ -9,11 +9,6 @@ public class SystemBase
 
     public SystemBase(GameWorld world)
     {
-        
         this.world = world;
     }
-
-    
-    
-
 }

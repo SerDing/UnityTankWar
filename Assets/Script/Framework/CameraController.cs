@@ -23,15 +23,24 @@ public class CameraController : MonoBehaviour
     {
         if (target != null)
         {
-            Follow();
+            if (target.identity.isDead == false)
+            {
+                Follow();
+            }
+            else
+            {
+                target = null;
+            }
         }
+
     }
 
     public void SetTarget(Entity target)
     {
         Debug.Log("target " + target.identity.tag);
         this.target = target;
-        cameraMoveSpeed = target.moveComponent.moveSpeed;
+        Vector2 targetPosition = target.gameobjectComponent.transform.position;
+        this.transform.position.Set(targetPosition.x, targetPosition.y, -5);
     }
 
     void Follow()

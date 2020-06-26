@@ -3,26 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Entity 
+public class Entity
 {
     public GameobjectComponent gameobjectComponent;
 
     public Identity identity;
     public InputComponent inputComponent = null;
     public MoveComponent moveComponent = null;
-    
+
+    public LifeComponent lifeComponent;
     public TankComponent tankComponent = null;
     public GunComponent gunComponent = null;
     public AiComponent aiComponent = null;
     public BulletComponent bulletComponent = null;
     public BuffComponent buffComponent = null;
-    
+    public EffectComponent effectComponent = null;
+    public LaserComponent laserComponent = null ;
 
+    public Queue<Entity> children;
     public Entity()
     {
         gameobjectComponent = new GameobjectComponent() { entity = this };
         identity = new Identity() { entity = this };
-
+        children = new Queue<Entity>();
 
         //// pawn
         //inputComponent = new InputComponent() { entity = this };
@@ -57,6 +60,10 @@ public class Entity
         {
             moveComponent.entity = this;
         }
+        if (lifeComponent != null)
+        {
+            lifeComponent.entity = this;
+        }
         if (tankComponent != null)
         {
             tankComponent.entity = this;
@@ -77,5 +84,18 @@ public class Entity
         {
             bulletComponent.entity = this;
         }
+        if (effectComponent != null)
+        {
+            effectComponent.entity = this;
+        }
+        if (laserComponent != null)
+        {
+            laserComponent.entity = this;
+        }
+    }
+
+    public void AddChild(Entity entity)
+    {
+        children.Enqueue(entity);
     }
 }

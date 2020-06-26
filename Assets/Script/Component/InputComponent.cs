@@ -29,10 +29,14 @@ public class InputComponent : ComponentBase
             inputMap.Add("a", "move_left");
             inputMap.Add("d", "move_right");
             // "rnf" = "rotate and fire"
-            inputMap.Add("up", "rnf_up");
-            inputMap.Add("down", "rnf_down");
-            inputMap.Add("left", "rnf_left");
-            inputMap.Add("right", "rnf_right");
+            //inputMap.Add("up", "rnf_up");
+            //inputMap.Add("down", "rnf_down");
+            //inputMap.Add("left", "rnf_left");
+            //inputMap.Add("right", "rnf_right");
+
+            //inputMap.Add("space", "fire");
+            inputMap.Add("mouseLeft", "fire");
+
         }
 
 

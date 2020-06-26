@@ -14,8 +14,10 @@ public class GunSystem : SystemBase
         {
             return;
         }
+
+        //EquipGun(EquipmentManager.GetInstance().GetGun(1), gunComponent, gameobjectComponent);
+
         Debug.Log("GunSystem.Init");
-        EquipGun(EquipmentManager.GetInstance().GetGun(1), gunComponent, gameobjectComponent);
     }
 
     public void Update(GunComponent gunComponent,InputComponent input, GameobjectComponent gameobjectComponent)
@@ -25,102 +27,82 @@ public class GunSystem : SystemBase
             return;
         }
 
-        SetDirection(gunComponent, input, gameobjectComponent.transform);
-        gunComponent.timeCount += Time.deltaTime;
-        if (gunComponent.timeCount >= gunComponent.shootCd)
+        if (gunComponent.entity.identity.isAIControl == false)
         {
-            for (int i = 0; i < GunComponent.actions.GetLength(0); i++)
+            SetDirection(gunComponent, input, gameobjectComponent.transform);
+        }
+
+        gunComponent.laserTimer.Update();
+        if (gunComponent.laserTimer.isRunning == false)
+        {
+            if (InputSystem.GetHoldAction(input, "laser"))
             {
-                if (InputSystem.GetHoldAction(input, GunComponent.actions[i]) == true)
-                {
-                    gunComponent.timeCount = 0;
-                    Fire(gunComponent, gameobjectComponent.transform);
-                    break;
-                }
+                gunComponent.laserTimer.Enter();
+                EmitLaser(gunComponent, gameobjectComponent.transform);
+                return;
             }
         }
+
+        gunComponent.fireTimer.Update();
+        if (gunComponent.fireTimer.isRunning == false)
+        {
+            if (InputSystem.GetHoldAction(input, "fire"))
+            {
+                gunComponent.fireTimer.Enter();
+                Fire(gunComponent, gameobjectComponent.transform);
+            }   
+        }
+
+        
+        
     }
 
     protected void SetDirection(GunComponent gunComponent, InputComponent input, Transform transform)
     {
-        bool rnf_left = InputSystem.GetHoldAction(input, "rnf_left");
-        bool rnf_right = InputSystem.GetHoldAction(input, "rnf_right");
-        bool rnf_up = InputSystem.GetHoldAction(input, "rnf_up");
-        bool rnf_down = InputSystem.GetHoldAction(input, "rnf_down");
+        Vector3 shotPosition;
+        shotPosition = Input.mousePosition;
+        shotPosition = Camera.main.ScreenToWorldPoint(shotPosition);
 
-        float axisH = 0;
-        float axisV = 0;
+        RotateGun(transform, shotPosition, 1.0f);
+    }
 
-        if (rnf_left == true)
+    public void RotateGun(Transform transform, Vector3 shotPosition, float accuracy)
+    {
+        float deltaAngle = Vector2.SignedAngle(transform.up, shotPosition - transform.position);
+        if (Mathf.Abs(deltaAngle) >= accuracy)
         {
-            axisH = -1;
+            transform.Rotate(new Vector3(0, 0, Mathf.Sign(deltaAngle) * 1.0f));
         }
-        else if (rnf_right == true)
-        {
-            axisH = 1;
-        }
-        else
-        {
-            axisH = 0;
-        }
-
-        if (rnf_up == true)
-        {
-            axisV = 1;
-        }
-        else if (rnf_down == true)
-        {
-            axisV = -1;
-        }
-        else
-        {
-            axisV = 0;
-        }
-
-        if (axisV > 0 && axisH == 0)
-        {
-            gunComponent.shootDir = 0;
-        }
-        else if (axisV > 0 && axisH > 0)
-        {
-            gunComponent.shootDir = 1;
-        }
-        else if (axisH > 0 && axisV == 0)
-        {
-            gunComponent.shootDir = 2;
-        }
-        else if (axisV < 0 && axisH > 0)
-        {
-            gunComponent.shootDir = 3;
-        }
-        else if (axisV < 0 && axisH == 0)
-        {
-            gunComponent.shootDir = 4;
-        }
-        else if (axisV < 0 && axisH < 0)
-        {
-            gunComponent.shootDir = 5;
-        }
-        else if (axisH < 0 && axisV == 0)
-        {
-            gunComponent.shootDir = 6;
-        }
-        else if (axisV > 0 && axisH < 0)
-        {
-            gunComponent.shootDir = 7;
-        }
-        transform.rotation = Quaternion.Euler(0, 0, 360 - gunComponent.shootDir * 45);
-        
     }
 
     protected void Fire(GunComponent gunComponent, Transform transform)
     {
-        Vector3 bulletPos = transform.position + transform.up * gunComponent.fireOffset;
+        //Debug.Log("GunSystem.Fire");
+        Vector3 bulletPos = transform.position + transform.up * gunComponent.fireOffset * transform.lossyScale.x;
         Entity bullet = world.entitySystem.CreateFrom(gunComponent.bulletPrefab, bulletPos);
-        
         bullet.gameobjectComponent.transform.rotation = transform.rotation;
         bullet.bulletComponent.buffName = gunComponent.gunData.bulletBuff;
-        bullet.identity.master = gunComponent.entity;
+        bullet.bulletComponent.damage = gunComponent.firePower;
+        bullet.identity.master = gunComponent.entity.identity.master;
+        bullet.identity.camp = bullet.identity.master.identity.camp;
+        Entity fireEffect = world.effectSystem.CreateFireEffect(bulletPos, 0, transform.rotation);
+        fireEffect.gameobjectComponent.transform.SetParent(transform);
+        gunComponent.entity.AddChild(fireEffect);
+    }
+
+    protected void EmitLaser(GunComponent gunComponent, Transform transform)
+    {
+        Vector3 startingPosition = transform.position + transform.up * (gunComponent.fireOffset - 5) * transform.lossyScale.x;
+        Entity laser = world.entitySystem.CreateFrom(gunComponent.laserPrefab, startingPosition);
+        laser.gameobjectComponent.transform.rotation = transform.rotation;
+        laser.identity.master = gunComponent.entity.identity.master;
+        laser.identity.camp = laser.identity.master.identity.camp;
+        laser.laserComponent.exisingTime += Time.time;
+        laser.gameobjectComponent.transform.SetParent(transform);
+        gunComponent.laserEntity = laser;
+        gunComponent.entity.AddChild(laser);
+        Entity fireEffect = world.effectSystem.CreateFireEffect(startingPosition, 1, transform.rotation);
+        fireEffect.gameobjectComponent.transform.SetParent(transform);
     }
 
     protected void EquipGun(GunData gunData, GunComponent gunComponent, GameobjectComponent gameobjectComponent)
@@ -128,5 +110,6 @@ public class GunSystem : SystemBase
         gunComponent.gunData = gunData;
         var sprite = Resources.Load<Sprite>(gunData.spritePath);
         gameobjectComponent.spriteRenderer.sprite = sprite;
+        Debug.Log("EquipGun:" + gunData.spritePath);
     }
 }

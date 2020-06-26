@@ -5,6 +5,32 @@ public class EntitySystem : SystemBase
     {
     }
 
+    public Entity CreateTank(GameObject prefab, Vector3 position)
+    {
+        Entity tank = CreateFrom(prefab, position);
+
+        world.controllerSystem.InitBodywork(1, tank.tankComponent, tank.moveComponent, tank.gameobjectComponent);
+        Entity gunEntity = world.controllerSystem.CreateGunEntity(tank.gameobjectComponent);
+        world.gunSystem.InitGun(1, gunEntity.gunComponent, gunEntity.gameobjectComponent);
+        tank.tankComponent.gunEntity = gunEntity;
+        gunEntity.identity.master = tank;
+        gunEntity.gunComponent.fireTimer.Enter(gunEntity.gunComponent.fireCD);
+        gunEntity.gunComponent.laserTimer.Enter(gunEntity.gunComponent.laserCD);
+
+        Debug.Log("CreateTank: " + tank.identity.tag);
+        return tank;
+    }
+
+    public Entity CreateEnemyTank(GameObject prefab, Vector3 position)
+    {
+        Entity tank = CreateTank(prefab, position);
+        tank.identity.isAIControl = true;
+        tank.inputComponent.isAIControl = true;
+        tank.tankComponent.gunEntity.identity.isAIControl = true;
+        tank.tankComponent.gunEntity.inputComponent.isAIControl = true;
+        return tank;
+    }
+
     public Entity CreateFrom(GameObject prefab, Vector3 position)
     {
         GameObject instance = GameObject.Instantiate(prefab);
@@ -24,9 +50,7 @@ public class EntitySystem : SystemBase
         entity.LinkComponentToEntity();
         world.AddEntity(entity);
 
-        Debug.Log("EntitySystem.CreateFor, tag: " + entity.identity.tag);
-        //Debug.Log("EntitySystem.CreateFor, input: " + entity.inputComponent);
-        //Debug.Log("EntitySystem.CreateFor, gun: " + entity.gunComponent);
+        //Debug.Log("EntitySystem.CreateFor, tag: " + entity.identity.tag);
         return entity;
     }
 
@@ -74,6 +98,8 @@ public class EntitySystem : SystemBase
         world.controllerSystem.InitBodywork(1, tank.tankComponent, tank.moveComponent, tank.gameobjectComponent);
         Entity gunEntity = world.controllerSystem.CreateGunEntity(tank.gameobjectComponent);
         world.gunSystem.InitGun(1, gunEntity.gunComponent, gunEntity.gameobjectComponent);
+        tank.tankComponent.gunEntity = gunEntity;
+        gunEntity.identity.master = tank;
 
         Debug.Log("NewTank, bulletComponent: " + tank.bulletComponent);
         return tank;
@@ -82,22 +108,23 @@ public class EntitySystem : SystemBase
     public Entity NewEnemyTank(GameObject prefab, Vector3 position){
         Entity tank = NewTank(prefab, position);
         tank.identity.isAIControl = true;
+        tank.inputComponent.isAIControl = true;
+        tank.tankComponent.gunEntity.identity.isAIControl = true;
+        tank.tankComponent.gunEntity.inputComponent.isAIControl = true;
         return tank;
-    }
-
-    public Entity NewBullet(GameObject prefab, Vector3 position)
-    {
-        Entity bullet = NewPawn(prefab, position);
-        bullet.identity.tag = "bullet";
-
-        bullet.bulletComponent = new BulletComponent() { entity = bullet };
-        Debug.Log("NewBullet");
-        return bullet;
     }
 
     public void DestroyEntity(Entity entity)
     {
         Debug.Log("destroy entity: " + entity.identity.tag);
+        entity.identity.isDead = true;
         world.RemoveEntity(entity);
+        if (entity.children.Count > 0)
+        {
+            foreach (var child in entity.children)
+            {
+                world.entitySystem.DestroyEntity(child);
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ public class AISystem : SystemBase
 {
     public AISystem(GameWorld world) : base(world)
     {
+
     }
 
     public void Update(Identity identity, AiComponent aicompont, InputComponent input)
@@ -18,9 +19,16 @@ public class AISystem : SystemBase
 
         if(identity.isAIControl == true)
         {
-            MoveAI.moveAI(aicompont, input);
-            ShootAI.shootAI(aicompont, input);
+            foreach (AI ai in aicompont.ais)
+            {
+                ai.Update();
+            }
         }
-        
+    }
+    
+    public void AddAi(AiComponent aiComponent, AI ai)
+    {
+        aiComponent.ais.Add(ai);
+        ai.world = this.world;
     }
 }

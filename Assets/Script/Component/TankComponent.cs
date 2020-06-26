@@ -6,5 +6,6 @@ public class TankComponent : ComponentBase
 {
     public Bodywork bodywork;
     public GameObject gun;
-    public static Dictionary<string, int> moveActionDict = new Dictionary<string, int>();
+    [System.NonSerialized] public Entity gunEntity;
+    public float spinSpeed = 1.0f;
 }

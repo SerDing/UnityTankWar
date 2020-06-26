@@ -20,11 +20,21 @@ public class MoveSystem : SystemBase
         BoxCollider2D collider = gameobjectComponent.collider;
         if (move.needMove == true)
         {
-            Vector3 nextPosition = transform.position + transform.up * move.moveSpeed * Time.fixedDeltaTime;
+            Vector3 directionVec;
+            if(move.moveDirection == 1)
+            {
+                directionVec = transform.up;
+            }
+            else
+            {
+                directionVec = -transform.up;
+            }
+            Vector3 nextPosition = transform.position + directionVec * move.moveSpeed * Time.fixedDeltaTime;
+            //Vector3 nextPosition = transform.position + transform.up * move.moveSpeed * Time.fixedDeltaTime;
             if (move.collisionDetection == true)
             {
                 collider.enabled = false;
-                Collider2D otherCollider = Physics2D.OverlapBox(nextPosition, collider.size, 0);
+                Collider2D otherCollider = Physics2D.OverlapBox(nextPosition, collider.size, transform.rotation.eulerAngles.z);
                 if (otherCollider != null && !otherCollider.tag.Equals("tree"))
                 {
                     nextPosition = transform.position;
@@ -38,5 +48,15 @@ public class MoveSystem : SystemBase
             }
 
         }
-    }    
+    }
+
+    public static void MoveForward(Transform transform, float speed)
+    {
+        transform.position += transform.up * speed * Time.fixedDeltaTime;
+    }
+
+    public static void MoveBack(Transform transform, float speed)
+    {
+        transform.position += -transform.up * speed * Time.fixedDeltaTime;
+    }
 }

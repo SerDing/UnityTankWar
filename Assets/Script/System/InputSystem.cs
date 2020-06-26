@@ -17,21 +17,49 @@ public class InputSystem : SystemBase
         {
             foreach (var map in InputComponent.inputMap)
             {
-                if (Input.GetKeyDown(map.Key))
+
+                if (!map.Key.Contains("mouse") && Input.GetKeyDown(map.Key))
                 {
                     input.tempList.Add(map.Value);
+                    
                 }
             }
             ProcessInputStates(input, InputComponent.STATE.PRESSED);
 
+            if (InputComponent.inputMap.ContainsKey("mouseLeft") && Input.GetMouseButtonDown(0))
+            {
+                input.inputStates[InputComponent.inputMap["mouseLeft"]] = InputComponent.STATE.PRESSED;
+            }
+            if (InputComponent.inputMap.ContainsKey("mouseRight") && Input.GetMouseButtonDown(1))
+            {
+                input.inputStates[InputComponent.inputMap["mouseRight"]] = InputComponent.STATE.PRESSED;
+            }
+            if (InputComponent.inputMap.ContainsKey("mouseMiddle") && Input.GetMouseButtonDown(2))
+            {
+                input.inputStates[InputComponent.inputMap["mouseMiddle"]] = InputComponent.STATE.PRESSED;
+            }
+
             foreach (var map in InputComponent.inputMap)
             {
-                if (Input.GetKeyUp(map.Key))
+                if (!map.Key.Contains("mouse") && Input.GetKeyUp(map.Key))
                 {
                     input.tempList.Add(map.Value);
                 }
             }
             ProcessInputStates(input, InputComponent.STATE.RELEASED);
+
+            if (InputComponent.inputMap.ContainsKey("mouseLeft") && Input.GetMouseButtonUp(0))
+            {
+                input.inputStates[InputComponent.inputMap["mouseLeft"]] = InputComponent.STATE.RELEASED;
+            }
+            if (InputComponent.inputMap.ContainsKey("mouseRight") && Input.GetMouseButtonUp(1))
+            {
+                input.inputStates[InputComponent.inputMap["mouseRight"]] = InputComponent.STATE.RELEASED;
+            }
+            if (InputComponent.inputMap.ContainsKey("mouseMiddle") && Input.GetMouseButtonUp(2))
+            {
+                input.inputStates[InputComponent.inputMap["mouseMiddle"]] = InputComponent.STATE.RELEASED;
+            }
         }
 
         foreach (var state in input.inputStates) // set pressed keys to STATE.HOLD
@@ -53,6 +81,7 @@ public class InputSystem : SystemBase
         }
         ProcessInputStates(input, InputComponent.STATE.CLEAER);
 
+        ReleaseAll(input);
     }
 
     private static void ProcessInputStates(InputComponent input, InputComponent.STATE state)
@@ -66,12 +95,23 @@ public class InputSystem : SystemBase
 
     public static void PressAction(InputComponent input, string action)
     {
-        input.inputStates[action] = InputComponent.STATE.PRESSED;
+        if (input.inputStates.ContainsKey(action))
+        {
+            input.inputStates[action] = InputComponent.STATE.HOLD;
+        }
+        else
+        {
+            input.inputStates[action] = InputComponent.STATE.PRESSED;
+        }
+
     }
 
     public static void ReleaseAction(InputComponent input, string action)
     {
-        input.inputStates[action] = InputComponent.STATE.RELEASED;
+        if (input.inputStates.ContainsKey(action))
+        {
+            input.inputStates[action] = InputComponent.STATE.RELEASED;
+        }
     }
 
     public static bool GetPressAction(InputComponent input, string action)
@@ -102,5 +142,20 @@ public class InputSystem : SystemBase
         }
 
         return false;
+    }
+
+    public void ReleaseAll(InputComponent input)
+    {
+        if (input.isAIControl == true)
+        {
+            foreach (var state in input.inputStates) // set pressed keys to STATE.HOLD
+            {
+                if (input.inputStates[state.Key] == InputComponent.STATE.HOLD)
+                {
+                    input.tempList.Add(state.Key);
+                }
+            }
+        }
+        ProcessInputStates(input, InputComponent.STATE.RELEASED);
     }
 }

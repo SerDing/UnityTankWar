@@ -6,10 +6,21 @@ using UnityEngine;
 public class GunComponent : ComponentBase
 {
     public GameObject bulletPrefab;
-    public int shootDir = 0; // 0
-    public float shootCd = 0.8f; // 2.0f
+    public GameObject laserPrefab;
+    [System.NonSerialized] public Entity laserEntity = null;
+    public float fireCD = 0.8f; // 2.0f
+    public float laserCD = 8f; // 2.0f
     public float fireOffset = 22f;
-    public GunData gunData;
+    public float rotationSpeed = 10f;
+    public float firePower = 48;
     public float timeCount; // 0f
-    public static string[] actions = { "rnf_left", "rnf_right", "rnf_up", "rnf_down" };
+    public Timer fireTimer;
+    public Timer laserTimer;
+    public GunData gunData;
+
+    public GunComponent()
+    {
+        fireTimer = new Timer(fireCD);
+        laserTimer = new Timer(laserCD);
+    }
 }

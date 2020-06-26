@@ -3,20 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AI
-{    
-    private static AI instance = null;
+{
+    public Entity entity;
+    public Transform selfTransform;
 
-    public static AI GetInstance()
+    public GameWorld world;
+    public AI(Entity entity)
     {
-        if (instance == null)
-        {
-            instance = new AI();
-        }
-        return instance;
-    }
-
-    public AI()
-    {
+        this.entity = entity;
+        selfTransform = entity.gameobjectComponent.transform;
         Debug.Log("AI base construction.");
     }
 
