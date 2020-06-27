@@ -92,10 +92,11 @@ public class BossAI : NormalAI
                     //}
 
                     InputSystem.PressAction(entity.tankComponent.gunEntity.inputComponent, "laser");
-                    if (entity.gunComponent.laserEntity == null || entity.gunComponent.laserEntity.identity.isDead == true)
-                    {
-                        InputSystem.PressAction(entity.tankComponent.gunEntity.inputComponent, "fire");
-                    }
+                    Debug.Log("----press laser, targetTag:" + target.identity.tag);
+                    //if (entity.gunComponent.laserEntity == null || entity.gunComponent.laserEntity.identity.isDead == true)
+                    //{
+                    //    InputSystem.PressAction(entity.tankComponent.gunEntity.inputComponent, "fire");
+                    //}
 
                 }
 

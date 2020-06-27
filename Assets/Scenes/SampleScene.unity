@@ -252,6 +252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entities: []
+  enemyCount: 2
   tankPrefab: {fileID: 787383236229416580, guid: bd7834424a10b7040b9c57a4af8eb630,
     type: 3}
   enemyPrefabs:
@@ -265,7 +266,7 @@ MonoBehaviour:
   - {fileID: 5247080317470387451, guid: 0c5a43926b94cc840aabcc3856ff78cb, type: 3}
   effects:
   - {fileID: 7268347083678855758, guid: eef0fadd67dcc56418d87954dc71d442, type: 3}
-  - {fileID: 3976233982819589936, guid: f870cfce63a88704eac8da160462f942, type: 3}
+  - {fileID: 987450956939013343, guid: 22b645984400d8e478273363023e49f0, type: 3}
   - {fileID: 0}
   explosionLarge: {fileID: 8693843926905865694, guid: 9c6078d0275143940adf14fddd449236,
     type: 3}

@@ -63,10 +63,20 @@ public class ControllerSystem : SystemBase
             move.needMove = true;
             spinSpeed /= 2;
             gameobjectComponent.animator.SetInteger("state", 1);
+            if (tank.trackLeftAnimator != null && tank.trackRightAnimator != null)
+            {
+                tank.trackLeftAnimator.SetBool("move", true);
+                tank.trackRightAnimator.SetBool("move", true);
+            }
         }
         else
         {
             gameobjectComponent.animator.SetInteger("state", 0);
+            if (tank.trackLeftAnimator != null && tank.trackRightAnimator != null)
+            {
+                tank.trackLeftAnimator.SetBool("move", false);
+                tank.trackRightAnimator.SetBool("move", false);
+            }
         }
 
         if (spinLeft)

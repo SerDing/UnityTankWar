@@ -21,6 +21,8 @@ public class GameWorld : MonoBehaviour
     private Queue<Entity> newEntities;
     private Queue<Entity> expiredEntities;
 
+    public int enemyCount = 5;
+
     public GameObject tankPrefab;
     public GameObject[] enemyPrefabs;
     public GameObject[] tiles;

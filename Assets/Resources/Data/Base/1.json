@@ -1,6 +1,6 @@
 {
-    "spritePath":"Sprite/Base/black_1",
-    "animTrigger":1,
-    "moveSpeed":120,
-    "hp":200
+  "spritePath": "Sprite/Tank/Hulls_Color_D/Hull_02",
+  "animTrigger": 1,
+  "moveSpeed": 120,
+  "hp": 200
 }

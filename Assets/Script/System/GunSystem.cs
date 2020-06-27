@@ -103,6 +103,7 @@ public class GunSystem : SystemBase
         gunComponent.entity.AddChild(laser);
         Entity fireEffect = world.effectSystem.CreateFireEffect(startingPosition, 1, transform.rotation);
         fireEffect.gameobjectComponent.transform.SetParent(transform);
+        gunComponent.entity.AddChild(fireEffect);
     }
 
     protected void EquipGun(GunData gunData, GunComponent gunComponent, GameobjectComponent gameobjectComponent)

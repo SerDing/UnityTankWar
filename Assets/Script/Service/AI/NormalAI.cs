@@ -155,7 +155,7 @@ public class NormalAI : AI
                 return null;
             }
             otherEntity = entityHolder.entity;
-            if (otherEntity.tankComponent != null && otherEntity.identity.camp != entity.identity.camp)
+            if (otherEntity.tankComponent.enable != false && otherEntity.identity.camp != entity.identity.camp)
             {
                 return otherEntity;
             }

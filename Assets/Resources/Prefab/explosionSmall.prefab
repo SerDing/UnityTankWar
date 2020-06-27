@@ -71,8 +71,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 2c69952b669652345b2fab80d25e9374, type: 3}
+  m_SortingOrder: 4
+  m_Sprite: {fileID: 21300000, guid: 862d7a7ea0dafcb4caee059c223146aa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -153,13 +153,18 @@ MonoBehaviour:
         hp: 0
       gun: {fileID: 0}
       spinSpeed: 1
+      trackLeftAnimator: {fileID: 0}
+      trackRightAnimator: {fileID: 0}
     gunComponent:
       enable: 0
       bulletPrefab: {fileID: 0}
-      shootCd: 0.8
+      laserPrefab: {fileID: 0}
+      fireCD: 0.8
+      laserCD: 8
       fireOffset: 22
       rotationSpeed: 10
-      fixAngle: -90
+      firePower: 48
+      timeCount: 0
       gunData:
         spritePath: 
         shootCD: 0
@@ -167,16 +172,12 @@ MonoBehaviour:
         bulletDamage: 0
         bulletSpeed: 0
         bulletBuff: 
-      timeCount: 0
     aiComponent:
       enable: 0
-      moveDirection: 0
       timeCount: 0
-      lastMoveState: 
-      lastShootState: 
-      changeDirCd: 2
-      shootCD: 0
-      finishShoot: 0
+      accuracy: 12
+      laserCD: 8
+      laserTimer: 5
     bulletComponent:
       enable: 0
       damage: 0
@@ -188,3 +189,10 @@ MonoBehaviour:
       enable: 0
     effectComponent:
       enable: 1
+      isFollow: 0
+    laserComponent:
+      enable: 0
+      exisingTime: 5
+      damage: 10
+      attackInterval: 0.3
+      attackTimer: 0

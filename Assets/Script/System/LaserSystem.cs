@@ -23,10 +23,10 @@ public class LaserSystem : SystemBase
                 laser.attackTimer = 0;
                 Transform transform = gameobjectComponent.transform;
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up);
-
+                Debug.DrawLine(transform.position, transform.up * 700);
                 if (hit.collider != null)
                 {
-                    Debug.DrawLine(transform.position, hit.point);
+                    //Debug.DrawLine(transform.position, hit.point);
                     EntityHolder entityHolder = hit.collider.gameObject.GetComponent<EntityHolder>();
                     if (entityHolder == null)
                     {
